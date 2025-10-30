@@ -8,8 +8,8 @@ class ThemeChangerScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
-    final bool isDarkMode = ref.watch(isDarkProvider);
+    // final bool isDarkMode = ref.watch(isDarkProvider);
+    final bool isDarkMode = ref.watch(themeNotifierProvider).isDarkMode;
 
     return Scaffold(
       appBar: AppBar(
@@ -20,8 +20,9 @@ class ThemeChangerScreen extends ConsumerWidget {
               isDarkMode ? Icons.dark_mode_outlined : Icons.light_mode_outlined,
             ),
             onPressed: () {
-              ref.read(isDarkProvider.notifier)
-              .update((state) => !state);
+              // ref.read(isDarkProvider.notifier)
+              // .update((state) => !state);
+              ref.read(themeNotifierProvider.notifier).toggleDarkMode();
             },
           ),
         ],
@@ -33,33 +34,34 @@ class ThemeChangerScreen extends ConsumerWidget {
 
 class _ThemeChangerView extends ConsumerWidget {
   const _ThemeChangerView();
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
-    final List<Color> colors = ref.watch( colorListProvider );
-    final int selectedColor = ref.watch(selectedColorProvider);
+    final List<Color> colors = ref.watch(colorListProvider);
+    // final int selectedColor = ref.watch(selectedColorProvider);
+    final int selectedColor = ref.watch(themeNotifierProvider).selectedColor;
 
     return ListView.builder(
       itemCount: colors.length,
-      itemBuilder: (context, index){
+      itemBuilder: (context, index) {
         final color = colors[index];
         return RadioGroup(
           groupValue: selectedColor,
-          onChanged: (_){
-            ref.read(selectedColorProvider.notifier).state = index;
-          }, 
+          onChanged: (_) {
+            // ref.read(selectedColorProvider.notifier).state = index;
+            ref.read(themeNotifierProvider.notifier).changeColorIndex(index);
+          },
           child: Column(
             children: [
               RadioListTile(
-                title: Text('This color', style: TextStyle(color: color),),
+                title: Text('This color', style: TextStyle(color: color)),
                 subtitle: Text('${color.toARGB32()}'),
-                value: color
-                ),
+                value: index,
+                activeColor: color,
+              ),
             ],
-          )
-          );
-      }
-      );
+          ),
+        );
+      },
+    );
   }
 }
